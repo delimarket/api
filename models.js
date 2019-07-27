@@ -5,7 +5,7 @@ const knex = require('knex')({
     connection: {
         host:'mysql.cba.pl',
         user:'instabotapi',
-        password:'B06dea8a3f',
+        password:'',
         database:'instabotapi',
         charset:'utf8'
     }
