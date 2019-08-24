@@ -1,4 +1,5 @@
 const token = require('./test')
+const chance = require('chance').Chance()
 
 const knex = require('knex')({
     client:'mysql',
@@ -14,6 +15,7 @@ const knex = require('knex')({
 const bookshelf=require('bookshelf')(knex)
 
 const User = bookshelf.Model.extend({tableName:'users'})
+
 module.exports=bookshelf;
 module.exports=chance;
 

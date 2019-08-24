@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const models = require('./models')
 const bookshelf = models.bookshelf
-
+const chance = models.chance
 
 const app = express()
 const port = process.env.PORT || 8080
