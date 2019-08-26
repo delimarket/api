@@ -1,5 +1,10 @@
 const token = require('./test')
 const chance = require('chance').Chance()
+const sha=require('sha.js')//sha('sha256').update(<password>).digest('hex')
+
+module.exports.hash = (password) => {
+    return sha('sha256').update(password).digest('hex')
+}
 
 const knex = require('knex')({
     client:'mysql',

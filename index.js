@@ -5,6 +5,7 @@ const session = require('express-session')
 const models = require('./models')
 const bookshelf = models.bookshelf
 const chance = models.chance
+const hash = require('./src/hash')
 
 const app = express()
 const port = process.env.PORT || 8080
@@ -35,9 +36,11 @@ router.get('/', (req, res) => {
 
 router.post('/login', (req, res) => {
 
-  //User
+  User.where('phone','+48'+req.body.phone).fetch().then(function(user) {
+    console.log(user)
+  })
 
-  if (req.body.username === 'admin' && req.body.password === 'admin') {
+  if (req.body.phone === 'admin' && req.body.password === 'admin') {
     let user = { username: 'admin', password: 'admin' }
     req.session.user = user
     res.redirect('/userPage')

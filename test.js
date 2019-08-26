@@ -5,3 +5,5 @@ let token = chance.apple_token()
 
 module.exports=userid
 module.exports=token
+
+//console.log(userid,token)
