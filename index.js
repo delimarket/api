@@ -35,7 +35,7 @@ router.get('/', (req, res) => {
 
 router.post('/login', (req, res) => {
 
-
+  //User
 
   if (req.body.username === 'admin' && req.body.password === 'admin') {
     let user = { username: 'admin', password: 'admin' }
