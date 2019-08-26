@@ -9,6 +9,8 @@ const chance = models.chance
 const app = express()
 const port = process.env.PORT || 8080
 
+const User = bookshelf.Model.extend({tableName:'users'})
+
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cookieParser())
@@ -27,11 +29,14 @@ const authenticateUser = (req, res, next) => {
 
 router.get('/', (req, res) => {
   res.json({
-    message: 'Hello world!'
+    info: 'Main'
   })
 })
 
 router.post('/login', (req, res) => {
+
+
+
   if (req.body.username === 'admin' && req.body.password === 'admin') {
     let user = { username: 'admin', password: 'admin' }
     req.session.user = user
