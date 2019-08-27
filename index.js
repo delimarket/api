@@ -2,15 +2,11 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
+
 const models = require('./models')
-const bookshelf = models.bookshelf
-const chance = models.chance
-const hash = require('./src/hash')
 
 const app = express()
 const port = process.env.PORT || 8080
-
-const User = models.User()
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
@@ -18,6 +14,8 @@ app.use(cookieParser())
 app.use(session({ secret: 'secretKey' }))
 
 const router = express.Router();
+
+const User = models.User()
 
 router.get('/', (req, res) => {
   res.json({
@@ -64,5 +62,6 @@ router.get('/logout', (req, res) => {
 })*/
 
 app.use('/', router)
+
 app.listen(port)
 console.log(`Listening on port: ${port}`);

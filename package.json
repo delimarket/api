@@ -1,0 +1,27 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/delimarket/api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/delimarket/api/issues"
+  },
+  "homepage": "https://github.com/delimarket/api#readme",
+  "dependencies": {
+    "bookshelf": "^0.15.1",
+    "chance": "^1.0.18",
+    "express": "^4.17.1",
+    "knex": "^0.19.2",
+    "mysql": "^2.17.1",
+    "sha.js": "^2.4.11"
+  }
+}

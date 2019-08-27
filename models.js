@@ -1,10 +1,6 @@
 const token = require('./test')
 const chance = require('chance').Chance()
-const sha=require('sha.js')//sha('sha256').update(<password>).digest('hex')
-
-module.exports.hash = (password) => {
-    return sha('sha256').update(password).digest('hex')
-}
+const sha = require('sha.js')
 
 const knex = require('knex')({
     client:'mysql',
@@ -17,23 +13,25 @@ const knex = require('knex')({
     }
 })
 
-const bookshelf=require('bookshelf')(knex)
+const bookshelf = require('bookshelf')(knex)
 
 const User = bookshelf.Model.extend({tableName:'users'})
 
-module.exports=User;
+const createUser = (data) => {
+    let userid = chance.bb_pin().substr(0,7)
+    let token = chance.apple_token()
 
-module.exports=bookshelf;
-module.exports=chance;
-
-module.exports.create=(json) => {
     return new User({
-        id: token.userid,
-        phone:json.phone,
-        name:json.name,
-        password:json.password,
-        is_deliver:json.is_deliver,
-        active:1,
-        token:token.token
+        id: userid,
+        phone: data.phone,
+        name: data.name,
+        password: sha('sha256').update(data.password).digest('hex'),
+        is_deliver: data.is_deliver,
+        active: 1,
+        token: token
     }).save()
+}
+
+module.exports = {
+    createUser
 }
