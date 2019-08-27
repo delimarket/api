@@ -1,45 +1,44 @@
-//const hashlib = require('hashlib')
+const token = require('./test')
+const chance = require('chance').Chance()
+const databaseLoginData = require('./database.json')
+const sha=require('sha.js')//sha('sha256').update(<password>).digest('hex')
 
-const knex = require('knex')({
-    client:'mysql',
-    connection: {
-        host:'mysql.cba.pl',
-        user:'instabotapi',
-        password:'',
-        database:'instabotapi',
-        charset:'utf8'
-    }
-})
+module.exports.hash = (password) => {
+    return sha('sha256').update(password).digest('hex')
+}
+
+const knex = require('knex')(databaseLoginData)
 
 const bookshelf=require('bookshelf')(knex)
 
 const User = bookshelf.Model.extend({tableName:'users'})
 
-const generateid = (x=7) => {
-    const alfabet = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","0","1","2","3","4","5","6","7","8","9"];
-    let token;
-    let regexp= /[a-z]/
-    do {
-        token=""
-        for(let i=0;i<x;i++) {
-            let rand = Math.floor(Math.random()*(alfabet.length-1))
-            token += alfabet[rand];
-        }
-    } while (!regexp.test(token))
-
-    return token
+module.exports={
+    User,
+    create: (json) => {
+        return new User({
+            id: token.userid,
+            phone:json.phone,
+            name:json.name,
+            password:json.password,
+            is_deliver:json.is_deliver,
+            active:1,
+            token:token.token
+        }).save()
+    }
 }
 
-module.exports=bookshelf;
+//module.exports=bookshelf;
+//module.exports=chance;
 
-module.exports.create=(json) => {
+/*module.exports.create=(json) => {
     return new User({
-        id: generateid(),
+        id: token.userid,
         phone:json.phone,
         name:json.name,
         password:json.password,
         is_deliver:json.is_deliver,
         active:1,
-        token:generateid(64)
+        token:token.token
     }).save()
-}
+}*/

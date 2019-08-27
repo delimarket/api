@@ -4,7 +4,8 @@ const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const models = require('./models')
 const bookshelf = models.bookshelf
-
+const chance = models.chance
+const sha = require('sha.js')
 
 const app = express()
 const port = process.env.PORT || 8080
@@ -16,6 +17,32 @@ app.use(session({ secret: 'secretKey' }))
 
 const router = express.Router();
 
+router.get('/', (req, res) => {
+  res.json({
+    info: 'Main'
+  })
+})
+
+const User = new models.User()
+
+router.post('/login', async (req, res) => {
+  let phone='+48'+req.body.phone
+
+  let user = await User.where('phone', phone).fetch()
+
+  console.log(req.body)
+  console.log(user)
+
+  if (sha('sha256').update(req.body.password).digest('hex') === user.attributes.password) {
+    req.session.user = user
+    console.log(req.session)
+    res.redirect('/userPage')
+  } else {
+    res.status(401).json({ message: 'invalid credits' })
+  }
+})
+
+/*
 const authenticateUser = (req, res, next) => {
   if (req.session.user) {
     next()
@@ -24,22 +51,6 @@ const authenticateUser = (req, res, next) => {
     next(err)
   }
 }
-
-router.get('/', (req, res) => {
-  res.json({
-    message: 'Hello world!'
-  })
-})
-
-router.post('/login', (req, res) => {
-  if (req.body.username === 'admin' && req.body.password === 'admin') {
-    let user = { username: 'admin', password: 'admin' }
-    req.session.user = user
-    res.redirect('/userPage')
-  } else {
-    res.status(401).json({ message: 'invalid credits' })
-  }
-})
 
 router.get('/userPage', authenticateUser, (req, res) => {
   res.json({
@@ -53,7 +64,7 @@ router.get('/logout', (req, res) => {
   res.json({
     message: 'Logged out'
   })
-})
+})*/
 
 app.use('/', router)
 app.listen(port)
