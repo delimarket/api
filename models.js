@@ -2,16 +2,7 @@ const token = require('./test')
 const chance = require('chance').Chance()
 const sha = require('sha.js')
 
-const knex = require('knex')({
-    client:'mysql',
-    connection: {
-        host:'localhost',
-        user:'root',
-        password:'',
-        database:'delimarket',
-        charset:'utf8'
-    }
-})
+const knex = require('knex')(databaseLoginData)
 
 const bookshelf = require('bookshelf')(knex)
 
