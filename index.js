@@ -5,12 +5,10 @@ const session = require('express-session')
 const models = require('./models')
 const bookshelf = models.bookshelf
 const chance = models.chance
-const hash = require('./src/hash')
+const sha = require('sha.js')
 
 const app = express()
 const port = process.env.PORT || 8080
-
-const User = models.User()
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
@@ -25,14 +23,19 @@ router.get('/', (req, res) => {
   })
 })
 
-router.post('/login', (req, res) => {
+const User = new models.User()
 
-  User.where('phone','+48'+req.body.phone).fetch().then(function(user) {
-    res.json(user)
-  })
+router.post('/login', async (req, res) => {
+  let phone='+48'+req.body.phone
 
-  if (req.body.phone === 'admin' && req.body.password === 'admin') {
+  let user = await User.where('phone', phone).fetch()
+
+  console.log(req.body)
+  console.log(user)
+
+  if (sha('sha256').update(req.body.password).digest('hex') === user.attributes.password) {
     req.session.user = user
+    console.log(req.session)
     res.redirect('/userPage')
   } else {
     res.status(401).json({ message: 'invalid credits' })

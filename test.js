@@ -7,5 +7,3 @@ module.exports={
     userid,
     token
 }
-
-//console.log(module.exports)
