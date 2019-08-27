@@ -45,26 +45,35 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req,res) => {
 
   let dane = ['phone','name','password']
+
+  const valid = require("./validators/form")
+  const makemsg=valid.make
+
   dane.map((d) => {
-    if(req.body[d]==null) {
-      res.status(401).json({
-        'type':'error',
-        'message':'No '+d
-      })
+    if(!req.body[d] || req.body[d]=="") {
+      res.status(401).json(makemsg('Invalid '+d, 0))
     }
   })
 
-  res.status(200).json({
-    'type':'success',
-    'message':'alles gut :)'
-  })
+  if(req.body['is_deliver']!=0 && req.body['is_deliver']!=1) {
+    res.status(401).json(makemsg('is deliver or not?', 0))
+  }
 
-  /*if(req.phone==null || req.name==null || req.password==null) {
-    res.status(401).json({
-      'type':'error',
-      'message':''
-    })
-  }*/
+  //valid phone
+  if (!valid.v_phone(req.body.phone)) {
+    res.json(makemsg('invalid phone number', 0))
+  }
+
+  //check & hash passwd
+  if (req.body.password.length<6) {
+    res.json(makemsg('too short password', 0))
+  }
+
+  let password = sha('sha256').update(req.body.password).digest('hex')
+
+  //generate id & token
+
+  res.status(200).json(makemsg('alles gut :)', 1))
 
 })
 
