@@ -1,6 +1,6 @@
-const token = require('./test')
 const chance = require('chance').Chance()
 const sha = require('sha.js')
+const databaseLoginData = require('./database.json')
 
 const knex = require('knex')(databaseLoginData)
 
@@ -24,5 +24,6 @@ const createUser = (data) => {
 }
 
 module.exports = {
+    User: User,
     createUser
 }
