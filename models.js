@@ -21,6 +21,8 @@ const bookshelf=require('bookshelf')(knex)
 
 const User = bookshelf.Model.extend({tableName:'users'})
 
+module.exports=User;
+
 module.exports=bookshelf;
 module.exports=chance;
 
