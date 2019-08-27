@@ -42,6 +42,32 @@ router.post('/login', async (req, res) => {
   }
 })
 
+router.post('/register', async (req,res) => {
+
+  let dane = ['phone','name','password']
+  dane.map((d) => {
+    if(req.body[d]==null) {
+      res.status(401).json({
+        'type':'error',
+        'message':'No '+d
+      })
+    }
+  })
+
+  res.status(200).json({
+    'type':'success',
+    'message':'alles gut :)'
+  })
+
+  /*if(req.phone==null || req.name==null || req.password==null) {
+    res.status(401).json({
+      'type':'error',
+      'message':''
+    })
+  }*/
+
+})
+
 const authenticateUser = (req, res, next) => {
   if (req.session.user) {
     next()
