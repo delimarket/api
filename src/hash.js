@@ -4,6 +4,12 @@ const hash = (password) => {
     return sha('sha256').update(password).digest('hex')
 }
 
-//console.log(hash('admin'))
+const check_hash = (plain,hashed) => {
+    if(hash(plain)==hashed) {
+        return true
+    } else {
+        return false
+    }
+}
 
 module.exports=hash;

@@ -1,0 +1,22 @@
+{
+  "name": "delimarket-restapi",
+  "version": "1.0.0",
+  "description": "none",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/delimarket/api.git"
+  },
+  "author": "Piotrek Barański",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/delimarket/api/issues"
+  },
+  "homepage": "https://github.com/delimarket/api#readme",
+  "dependencies": {
+    "sha.js": "^2.4.11"
+  }
+}
