@@ -43,6 +43,11 @@ router.post('/login', async (req, res) => {
 })
 
 router.post('/register', async (req,res) => {
+
+  if(req.session.user) {
+    res.redirect('/userPage')
+  }
+
   let dane = ['phone','name','password']
 
   const makemsg = valid.make
