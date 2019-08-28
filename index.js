@@ -31,7 +31,7 @@ router.post('/login', async (req, res) => {
 
     let user = await models.User.where('phone', phone).fetch()
 
-    if (sha('sha256').update(req.body.password).digest('hex') === user.password) {
+    if (sha('sha256').update(req.body.password).digest('hex') === user.attributes.password) {
       req.session.user = user
       res.redirect(`/userPage?loginRedirect=true`)
     } else {
