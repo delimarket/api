@@ -112,13 +112,13 @@ router.post('/register', async (req,res) => {
       'phone':phone,
       'name':name,
       'password':password,
-      'is_deliver':req.body.is_deliver,
+      'is_deliver':parseInt(req.body.is_deliver),
       'active':1,
       'token':usertoken
     })
 
-    newuser.save().then(() => {
-      res.status(200).json(makemsg('user ('+userid+') added', false))
+    newuser.save(null, {method: 'insert'}).then(() => {
+      res.status(200).json(makemsg(`user id: ${userid} added`, false))
     }).catch((error) => {
       res.json(makemsg(error))
     })
