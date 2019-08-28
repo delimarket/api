@@ -108,9 +108,9 @@ router.post('/register', async (req,res) => {
         'is_deliver':req.body.is_deliver,
         'active':1,
         'token':usertoken
-      }).save().then(
+      }).save().then(function () {
         res.status(200).json(makemsg('user ('+userid+') added', 1))
-      )
+      })
     } else {
       res.json(makemsg('your phone number is already registered', 0))
     }
