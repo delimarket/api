@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const FileStore = require('session-file-store')(session)
+const chance = require('chance').Chance()
 
 const sha = require('sha.js')
 const models = require('./models')
@@ -64,6 +65,17 @@ router.post('/register', async (req,res) => {
     res.json(makemsg('invalid phone number', 0))
   }
 
+  let phone = '+48'+req.body.phone;
+
+  //name
+  let name=valid.v_name(req.body['name'])
+
+  if(name.statut==true) {
+    name=name.word
+  } else {
+    res.json(makemsg('wrong name', 0))
+  }
+
   //check & hash passwd
   if (req.body.password.length<6) {
     res.json(makemsg('too short password', 0))
@@ -72,8 +84,42 @@ router.post('/register', async (req,res) => {
   let password = sha('sha256').update(req.body.password).digest('hex')
 
   //generate id & token
+    let userid,usertoken,rows,phone_access
 
-  res.status(200).json(makemsg('alles gut :)', 1))
+  try {
+    do {
+      userid=chance.bb_pin()
+      rows = await User.where('id', userid).count()
+    } while(rows!=0)
+
+    do {
+      usertoken=chance.apple_token()
+      rows = await User.where('token', usertoken).count()
+    } while(rows!=0)
+
+    //check phone nr
+    phone_access=await User.where('phone',phone).count()
+    if(phone_access==0) {
+      new User({
+        'id':userid,
+        'phone':phone,
+        'name':name,
+        'password':password,
+        'is_deliver':req.body.is_deliver,
+        'active':1,
+        'token':usertoken
+      }).save().then(
+        res.status(200).json(makemsg('user ('+userid+') added', 1))
+      )
+    } else {
+      res.json(makemsg('your phone number is already registered', 0))
+    }
+
+  } catch (error) {
+    res.json(makemsg(error,0))
+  }
+
+  //res.status(200).json(makemsg('alles gut :)', 1))
 
 })
 

@@ -55,10 +55,6 @@ const v_name = (n) => {
     }
 }
 
-console.log(v_name("piotr Baranski"))
-console.log(v_name("Piotr Barański"))
-console.log(v_name("jasdbfsdfisd"))
-
 module.exports={
     make,
     v_phone,

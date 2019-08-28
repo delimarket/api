@@ -2,3 +2,4 @@ package-lock.json
 database.json
 node_modules/
 sessions/
+test.js
