@@ -73,15 +73,19 @@ router.post('/register', [
     }
 
     let password = sha('sha256').update(req.body.password).digest('hex')
+    const userToken = userTokenGenerator()
+
+    const userId = chance.bb_pin()
+    //if (await models.User.)
 
     let newuser = new models.User({
       'id': userid,
-      'phone': phone,
-      'name': name,
-      'password': password,
+      'phone': req.body.phone,
+      'name': req.body.name,
+      'password': req.body.password,
       'is_deliver': parseInt(req.body.is_deliver),
       'active': 1,
-      'token': userTokenGenerator().hashed
+      'token': userToken['hashed']
     })
 
     newuser.save(null, {method: 'insert'}).then(() => {
