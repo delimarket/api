@@ -6,10 +6,9 @@ const FileStore = require('session-file-store')(session)
 const { check, validationResult } = require('express-validator')
 const validator = require('validator')
 
-const chance = require('chance').Chance()
 const sha = require('sha.js')
 const models = require('./models')
-const valid = require("./validators/form")
+const userTokenGenerator = require('./validators/generator')
 
 const app = express()
 const port = process.env.PORT || 8080
@@ -58,16 +57,16 @@ router.post('/register', [
     })
   }),
   check('name').custom((name) => {
-      const fullName = name.split(" ");
-      if (validator.isAlpha(fullName[0]) && validator.isLength(fullName[0],{min:3,max:30}) && fullName[1]) {
-        return true
-      } else {
-        throw new Error('Invalid name or surname')
-      }
+    const fullName = name.split(" ");
+    if (validator.isAlpha(fullName[0]) && validator.isLength(fullName[0],{min:3,max:30}) && fullName[1]) {
+      return true
+    } else {
+      throw new Error('Invalid name or surname')
+    }
   }),
   check('password').isLength({ min: 6, max: 30 }),
   check('is_deliver').isBoolean()
-], async (req,res) => {
+  ], async (req,res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() })
@@ -76,19 +75,30 @@ router.post('/register', [
     let password = sha('sha256').update(req.body.password).digest('hex')
 
     let newuser = new models.User({
-      'id':userid,
-      'phone':phone,
-      'name':name,
-      'password':password,
-      'is_deliver':req.body.is_deliver,
-      'active':1,
-      'token':usertoken
+      'id': userid,
+      'phone': phone,
+      'name': name,
+      'password': password,
+      'is_deliver': parseInt(req.body.is_deliver),
+      'active': 1,
+      'token': userTokenGenerator().hashed
     })
 
-    newuser.save().then(() => {
-      res.redirect('/userpage')
+    newuser.save(null, {method: 'insert'}).then(() => {
+      res.status(200).json({
+        'sms_code':usertoken['plain_text'], //do usuniecia w wersji produkcyjnej
+        'type':'success',
+        'data': {
+          'id':userid,
+          'phone':phone,
+          'name':name
+        }
+      })
     }).catch((error) => {
-      res.json(makemsg(error))
+      res.json({
+        message: error,
+        type: "error"
+      })
     })
   }
 )
