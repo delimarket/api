@@ -1,11 +1,7 @@
-const make = function (message, type) {
+const make = function (message, isError = true) {
     let ret = {}
 
-    if(type==0) {
-        ret.type='error'
-    } else {
-        ret.type='succes'
-    }
+    ret.type = isError ? 'error' : 'success'
 
     ret.message=message
 

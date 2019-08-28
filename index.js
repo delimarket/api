@@ -7,6 +7,7 @@ const chance = require('chance').Chance()
 
 const sha = require('sha.js')
 const models = require('./models')
+const valid = require("./validators/form")
 
 const app = express()
 const port = process.env.PORT || 8080
@@ -24,15 +25,13 @@ router.get('/', (req, res) => {
   })
 })
 
-const User = new models.User()
-
 router.post('/login', async (req, res) => {
   if (!req.session.user) {
     let phone=`+48${req.body.phone}`
 
-    let user = await User.where('phone', phone).fetch()
+    let user = await models.User.where('phone', phone).fetch()
 
-    if (sha('sha256').update(req.body.password).digest('hex') === user.attributes.password) {
+    if (sha('sha256').update(req.body.password).digest('hex') === user.password) {
       req.session.user = user
       res.redirect(`/userPage?loginRedirect=true`)
     } else {
@@ -44,25 +43,26 @@ router.post('/login', async (req, res) => {
 })
 
 router.post('/register', async (req,res) => {
-
   let dane = ['phone','name','password']
 
-  const valid = require("./validators/form")
-  const makemsg=valid.make
+  const makemsg = valid.make
 
-  dane.map((d) => {
+  for (let d of dane) {
     if(!req.body[d] || req.body[d]=="") {
-      res.status(401).json(makemsg('Invalid '+d, 0))
+      res.status(401).json(makemsg(`Invalid ${d}`))
+      return
     }
-  })
+  }
 
   if(req.body['is_deliver']!=0 && req.body['is_deliver']!=1) {
-    res.status(401).json(makemsg('is deliver or not?', 0))
+    res.status(401).json(makemsg('is deliver or not?'))
+    return
   }
 
   //valid phone
   if (!valid.v_phone(req.body.phone)) {
-    res.json(makemsg('invalid phone number', 0))
+    res.json(makemsg('invalid phone number'))
+    return
   }
 
   let phone = '+48'+req.body.phone;
@@ -73,20 +73,22 @@ router.post('/register', async (req,res) => {
   if(name.statut==true) {
     name=name.word
   } else {
-    res.json(makemsg('wrong name', 0))
+    res.json(makemsg('wrong name'))
+    return
   }
 
   //check & hash passwd
   if (req.body.password.length<6) {
-    res.json(makemsg('too short password', 0))
+    res.json(makemsg('too short password'))
+    return
   }
 
   let password = sha('sha256').update(req.body.password).digest('hex')
 
   //generate id & token
-    let userid,usertoken,rows,phone_access
+  let userid,usertoken,rows,phone_access
 
-  try {
+  /*try {
     do {
       userid=chance.bb_pin()
       rows = await User.where('id', userid).count()
@@ -99,24 +101,28 @@ router.post('/register', async (req,res) => {
 
     //check phone nr
     phone_access=await User.where('phone',phone).count()
-    if(phone_access==0) {
-      new User({
-        'id':userid,
-        'phone':phone,
-        'name':name,
-        'password':password,
-        'is_deliver':req.body.is_deliver,
-        'active':1,
-        'token':usertoken
-      }).save().then(function () {
-        res.status(200).json(makemsg('user ('+userid+') added', 1))
-      })
-    } else {
-      res.json(makemsg('your phone number is already registered', 0))
-    }
 
   } catch (error) {
-    res.json(makemsg(error,0))
+    res.json(makemsg("dupa"))
+  }*/
+
+  if(phone_access==0) {
+    const user = new models.User({
+      'id':userid,
+      'phone':phone,
+      'name':name,
+      'password':password,
+      'is_deliver':req.body.is_deliver,
+      'active':1,
+      'token':usertoken
+    })
+    user.save().then(() => {
+      res.status(200).json(makemsg('user ('+userid+') added', false))
+    }).catch((error) => {
+      res.json(makemsg(error))
+    })
+  } else {
+    res.json(makemsg('your phone number is already registered'))
   }
 
   //res.status(200).json(makemsg('alles gut :)', 1))
