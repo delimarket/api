@@ -99,10 +99,8 @@ router.post('/register', async (req,res) => {
       rows = await models.User.where('id', userid).count()
     } while(rows!=0)
 
-    do {
-      usertoken=chance.apple_token()
-      rows = await models.User.where('token', usertoken).count()
-    } while(rows!=0)
+    let generator = require('./validators/generator')
+    usertoken=generator()
 
     //check phone nr
     phone_access=await models.User.where('phone',phone).count()
@@ -119,11 +117,19 @@ router.post('/register', async (req,res) => {
       'password':password,
       'is_deliver':parseInt(req.body.is_deliver),
       'active':1,
-      'token':usertoken
+      'token':usertoken.hashed
     })
 
     newuser.save(null, {method: 'insert'}).then(() => {
-      res.status(200).json(makemsg(`user id: ${userid} added`, false))
+      res.status(200).json({
+        'sms_code':usertoken['plain_text'], //do usuniecia w wersji produkcyjnej
+        'type':'success',
+        'data': {
+          'id':userid,
+          'phone':phone,
+          'name':name
+        }
+      })
     }).catch((error) => {
       res.json(makemsg(error))
     })
