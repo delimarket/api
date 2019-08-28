@@ -26,6 +26,21 @@ router.get('/', (req, res) => {
 })
 
 router.post('/login', async (req, res) => {
+  let checkData = ['phone', 'password']
+
+  errors=[]
+
+  checkData.map((index) => {
+    if(!req.body[index]) errors.push(`empty or null ${index} in request body`)
+  })
+
+  if(errors.length!=0) {
+    res.json({
+      'type':'error',
+      'errors':errors
+    })
+  }
+
   if (!req.session.user) {
     let phone=`+48${req.body.phone}`
 
