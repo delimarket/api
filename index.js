@@ -88,26 +88,26 @@ router.post('/register', async (req,res) => {
   //generate id & token
   let userid,usertoken,rows,phone_access
 
-  /*try {
+  try {
     do {
       userid=chance.bb_pin()
-      rows = await User.where('id', userid).count()
+      rows = await models.User.where('id', userid).count()
     } while(rows!=0)
 
     do {
       usertoken=chance.apple_token()
-      rows = await User.where('token', usertoken).count()
+      rows = await models.User.where('token', usertoken).count()
     } while(rows!=0)
 
     //check phone nr
-    phone_access=await User.where('phone',phone).count()
+    phone_access=await models.User.where('phone',phone).count()
 
   } catch (error) {
     res.json(makemsg("dupa"))
-  }*/
+  }
 
   if(phone_access==0) {
-    const user = new models.User({
+    let newuser = new models.User({
       'id':userid,
       'phone':phone,
       'name':name,
@@ -116,7 +116,8 @@ router.post('/register', async (req,res) => {
       'active':1,
       'token':usertoken
     })
-    user.save().then(() => {
+
+    newuser.save().then(() => {
       res.status(200).json(makemsg('user ('+userid+') added', false))
     }).catch((error) => {
       res.json(makemsg(error))
@@ -124,8 +125,6 @@ router.post('/register', async (req,res) => {
   } else {
     res.json(makemsg('your phone number is already registered'))
   }
-
-  //res.status(200).json(makemsg('alles gut :)', 1))
 
 })
 
