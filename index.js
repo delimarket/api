@@ -8,6 +8,7 @@ const validator = require('validator')
 
 const sha = require('sha.js')
 const models = require('./models')
+const chance = require('chance')()
 const userTokenGenerator = require('./validators/generator')
 
 const app = express()
@@ -27,6 +28,7 @@ router.get('/', (req, res) => {
 })
 
 router.post('/login', [check('phone').isMobilePhone(), check('password').isLength({ min: 6, max: 30 })], async (req, res) => {
+
   if (!req.session.user) {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -78,7 +80,7 @@ router.post('/register', [
     let userId, rows
     do {
       userId = chance.bb_pin()
-      rows = await models.User.where('id',userid).count()
+      rows = await models.User.where('id',userId).count()
     } while (rows > 0)
 
     let newuser = new models.User({
@@ -93,18 +95,12 @@ router.post('/register', [
 
     newuser.save(null, {method: 'insert'}).then(() => {
       res.status(200).json({
-        'sms_code':usertoken['plain_text'], //do usuniecia w wersji produkcyjnej
-        'type':'success',
+        'message': 'User created successfully',
         'data': {
-          'id':userid,
+          'id':userId,
           'phone':phone,
           'name':name
         }
-      })
-    }).catch((error) => {
-      res.json({
-        message: error,
-        type: "error"
       })
     })
   }
