@@ -14,10 +14,10 @@ app.use(bodyParser.json())
 app.use(cookieParser())
 app.use(
   session({
-    secret: 'no way you will guess it',
+    secret: 'meine mutter ist computer',
     resave: true,
     store: new FileStore({
-      secret: 'no way you will guess it',
+      secret: 'meine mutter ist computer',
       logFn: args => {
         return args
       }
