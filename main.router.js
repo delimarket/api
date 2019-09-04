@@ -10,6 +10,8 @@ const { isFullName, isPhoneUsed } = require('./helpers/customValidators')
 const authenticateUser = require('./helpers/authenicateUser')
 const userTokenGenerator = require('./helpers/userTokenGenerator')
 
+const orderRouter = require('./order.router.js')
+
 router.get('/', (req, res) => {
   res.json({
     info: 'Main'
@@ -116,5 +118,7 @@ router.get('/logout', (req, res) => {
     message: 'Logged out'
   })
 })
+
+router.use('/order', authenticateUser, orderRouter)
 
 module.exports = router

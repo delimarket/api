@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const FileStore = require('session-file-store')(session)
 
-const router = require('./router')
+const router = require('./main.router.js')
 
 const app = express()
 const port = process.env.PORT || 8080
