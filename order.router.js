@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { check, validationResult } = require('express-validator')
+// const { check, validationResult } = require('express-validator')
 
 router.post('/new', async (req, res) => {
   /* const errors = validationResult(req)
