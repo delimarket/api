@@ -32,7 +32,9 @@ router.post(
       }
 
       const phone = `+48${req.body.phone}`
-      const user = await models.User.where('phone', phone).fetch()
+      const user = await models.User.where('phone', phone).fetch({
+        withRelated: ['orders']
+      })
 
       if (
         sha('sha256')
@@ -105,10 +107,12 @@ router.post(
   }
 )
 
-router.get('/userPage', authenticateUser, (req, res) => {
+router.get('/userPage', authenticateUser, async (req, res) => {
   res.json({
     message: 'Welcome to user page',
-    user: req.session.user
+    user: await models.User.where('id', req.session.user.id).fetch({
+      withRelated: ['orders']
+    })
   })
 })
 
