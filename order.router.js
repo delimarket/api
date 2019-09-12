@@ -10,16 +10,16 @@ router.post('/new', async (req, res) => {
     return res.status(422).json({ errors: errors.array() })
   } */
 
-  let generated_order_id,rows
+  let generatedOrderId, rows
 
   do {
-    generated_order_id=chance.string({'length':11,'alpha': true,'casing':"lower",'numeric':true})
-    rows=await models.Order.where('id',generated_order_id).count()
-  } while (rows>0);
+    generatedOrderId = chance.bb_pin()
+    rows = await models.Order.where('id', generatedOrderId).count()
+  } while (rows > 0)
 
   const order = new models.Order({
     user_id: req.session.user.id,
-    order_id: generated_order_id
+    order_id: generatedOrderId
   })
   order.save(null, { method: 'insert' }).then(() => {
     return res.status(200).json({
