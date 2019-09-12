@@ -17,7 +17,8 @@ app.use(
     secret: 'ebb0f0d74f6ba67aa1061375dd219456286b17e10f2ed0816e814bc320a858a7',
     resave: true,
     store: new FileStore({
-      secret: 'ebb0f0d74f6ba67aa1061375dd219456286b17e10f2ed0816e814bc320a858a7',
+      secret:
+        'ebb0f0d74f6ba67aa1061375dd219456286b17e10f2ed0816e814bc320a858a7',
       logFn: args => {
         return args
       }
